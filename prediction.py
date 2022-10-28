@@ -26,9 +26,9 @@ def prediction(tomorrow_date):
     ohlc_df = nse.get_history(symbol="NIFTY", start=datetime.date(2018, 1, 1), end=today_date, index=True)
     ohlc_df = ohlc_df.reset_index()
     ohlc_df = ohlc_df.drop(['Volume','Turnover'], axis=1)
-    # # https://pynative.com/python-datetime-format-strftime/#:~:text=Use%20datetime.,hh%3Amm%3Ass%20format.
-    today_date_str = today_date.strftime("%d-%B-%Y")
-    return_index = nsep.index_total_returns(symbol="NIFTY 50", start_date=today_date_str, end_date=today_date_str)
+    # https://pynative.com/python-datetime-format-strftime/#:~:text=Use%20datetime.,hh%3Amm%3Ass%20format.
+    # today_date_str = today_date.strftime("%d-%B-%Y")
+    # return_index = nsep.index_total_returns(symbol="NIFTY 50", start_date=today_date_str, end_date=today_date_str)
     ohlc_df['EMA200'] = ta.ema(ohlc_df['Close'],200)
     ohlc_df['EMA10'] = ta.ema(ohlc_df['Close'], 10)
     ohlc_df['BBlower'] = ta.bbands(ohlc_df['Close'], 20)['BBL_20_2.0'].values
@@ -47,6 +47,8 @@ def prediction(tomorrow_date):
     final_df['BB_upper'] = ohlc_df['BBupper'].values
     final_df['EMA10'] = ohlc_df['EMA10'].values
     final_df = final_df[-1:]
+    today_date_str = ohlc_df[-1:]['Date'].values[0].strftime("%d-%B-%Y")
+    return_index = nsep.index_total_returns(symbol="NIFTY 50", start_date=today_date_str, end_date=today_date_str)
     final_df['Total_return_index'] = return_index['TotalReturnsIndex'].values
     d = Min_max_scalar.transform(final_df)
     final_df_scaled = pd.DataFrame(d, columns=final_df_columns)
